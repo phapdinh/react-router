@@ -63,23 +63,23 @@ class StaticRouter extends React.Component {
   handleListen = () => noop;
   handleBlock = () => noop;
 
+  history = {
+    createHref: path => addLeadingSlash(this.props.basename + createURL(path)),
+    action: "POP",
+    location: stripBasename(this.props.basename, createLocation(this.props.location)),
+    push: this.handlePush,
+    replace: this.handleReplace,
+    go: staticHandler("go"),
+    goBack: staticHandler("goBack"),
+    goForward: staticHandler("goForward"),
+    listen: this.handleListen,
+    block: this.handleBlock
+  }
+
   render() {
-    const { basename = "", context = {}, location = "/", ...rest } = this.props;
+    const { context = {}, ...rest } = this.props;
 
-    const history = {
-      createHref: path => addLeadingSlash(basename + createURL(path)),
-      action: "POP",
-      location: stripBasename(basename, createLocation(location)),
-      push: this.handlePush,
-      replace: this.handleReplace,
-      go: staticHandler("go"),
-      goBack: staticHandler("goBack"),
-      goForward: staticHandler("goForward"),
-      listen: this.handleListen,
-      block: this.handleBlock
-    };
-
-    return <Router {...rest} history={history} staticContext={context} />;
+    return <Router {...rest} history={this.history} staticContext={context} />;
   }
 }
 
