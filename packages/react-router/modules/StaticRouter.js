@@ -51,8 +51,14 @@ function noop() {}
  * server-rendering scenarios.
  */
 class StaticRouter extends React.Component {
+  static defaultProps = {
+    baseName: "",
+    context: {},
+    location: "/"
+  };
+
   navigateTo(location, action) {
-    const { basename = "", context = {} } = this.props;
+    const { basename, context } = this.props;
     context.action = action;
     context.location = addBasename(basename, createLocation(location));
     context.url = createURL(context.location);
@@ -66,7 +72,10 @@ class StaticRouter extends React.Component {
   history = {
     createHref: path => addLeadingSlash(this.props.basename + createURL(path)),
     action: "POP",
-    location: stripBasename(this.props.basename, createLocation(this.props.location)),
+    location: stripBasename(
+      this.props.basename,
+      createLocation(this.props.location)
+    ),
     push: this.handlePush,
     replace: this.handleReplace,
     go: staticHandler("go"),
@@ -74,10 +83,10 @@ class StaticRouter extends React.Component {
     goForward: staticHandler("goForward"),
     listen: this.handleListen,
     block: this.handleBlock
-  }
+  };
 
   render() {
-    const { context = {}, ...rest } = this.props;
+    const { context, ...rest } = this.props;
 
     return <Router {...rest} history={this.history} staticContext={context} />;
   }
